@@ -15554,12 +15554,18 @@ var MappingContext = (function () {
       if (fkWasModified) return;
     }
     // check if the related entity is already hooked up
-    var thisEntity = relatedEntity.getProperty(inverseProperty.name);
+    if (inverseProperty.isScalar) {
+      var thisEntity = relatedEntity.getProperty(inverseProperty.name);
 
-    if (thisEntity !== targetEntity) {
-      // if not - hook it up.
+      if (thisEntity !== targetEntity) {
+        // if not - hook it up.
+        relatedEntities.push(relatedEntity);
+        relatedEntity.setProperty(inverseProperty.name, targetEntity);
+      }
+    }
+    else if (relatedEntity.getProperty(inverseProperty.name).indexOf(targetEntity) < 0) {
       relatedEntities.push(relatedEntity);
-      relatedEntity.setProperty(inverseProperty.name, targetEntity);
+      // The array will handle the inverse property
     }
   }
 
